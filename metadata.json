@@ -1,0 +1,6 @@
+{
+  "name": "CivicSignal",
+  "description": "AI-Powered Civic Issue Detection and Prioritization Platform for citizens and municipal staff.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
