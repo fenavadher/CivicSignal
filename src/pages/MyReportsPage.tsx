@@ -4,10 +4,11 @@ import { useAuth } from '../context/AuthContext';
 import { api } from '../services/api';
 import { CitizenReport, CATEGORY_LABELS, IssueCategory } from '../types';
 import { StatusBadge, SeverityBadge } from '../components/common/StatusBadge';
-import { PlusCircle, Search, Filter, MapPin, Eye, AlertCircle } from 'lucide-react';
+import { PlusCircle, Search, Filter, MapPin, Eye, AlertCircle, FileDown } from 'lucide-react';
+import { downloadIncidentReportPdf } from '../utils/pdfGenerator';
 
 export const MyReportsPage: React.FC = () => {
-  const { user } = useAuth();
+  const { user, showNotification } = useAuth();
   const [reports, setReports] = useState<CitizenReport[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -166,12 +167,25 @@ export const MyReportsPage: React.FC = () => {
                       })}
                     </td>
                     <td className="px-4 py-3 text-right">
-                      <Link
-                        to={`/reports/${rep.id}`}
-                        className="inline-flex items-center gap-1 text-blue-600 hover:text-blue-800 font-semibold"
-                      >
-                        <Eye className="w-3.5 h-3.5" /> Details
-                      </Link>
+                      <div className="flex items-center justify-end gap-2.5">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            downloadIncidentReportPdf(rep);
+                            showNotification(`Downloaded PDF report for ${rep.id}`, 'success');
+                          }}
+                          className="inline-flex items-center gap-1 text-slate-500 hover:text-slate-800 font-medium cursor-pointer"
+                          title="Download PDF report summary"
+                        >
+                          <FileDown className="w-3.5 h-3.5" /> PDF
+                        </button>
+                        <Link
+                          to={`/reports/${rep.id}`}
+                          className="inline-flex items-center gap-1 text-blue-600 hover:text-blue-800 font-semibold"
+                        >
+                          <Eye className="w-3.5 h-3.5" /> Details
+                        </Link>
+                      </div>
                     </td>
                   </tr>
                 ))}

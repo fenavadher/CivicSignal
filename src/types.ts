@@ -1,12 +1,22 @@
 export type UserRole = 'citizen' | 'staff' | 'admin';
 
+export interface NotificationPreferences {
+  emailStatusUpdates: boolean;
+  emailDuplicateGrouping: boolean;
+  emailWeeklyDigest: boolean;
+  smsEmergencyAlerts: boolean;
+}
+
 export interface User {
   id: string;
   email: string;
   name: string;
   role: UserRole;
-  department?: string;
+  phone?: string;
+  department?: string; // or ward/neighborhood for citizens
+  address?: string;
   avatarUrl?: string;
+  notificationPreferences?: NotificationPreferences;
   createdAt: string;
 }
 

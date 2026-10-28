@@ -63,6 +63,19 @@ export const api = {
     return res.json();
   },
 
+  async updateProfile(updates: Partial<User>): Promise<{ user: User }> {
+    const res = await fetch(`${API_BASE}/auth/profile`, {
+      method: 'PATCH',
+      headers: getHeaders(),
+      body: JSON.stringify(updates),
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.error || 'Failed to update profile');
+    }
+    return res.json();
+  },
+
   async getUsers(): Promise<{ users: User[] }> {
     const res = await fetch(`${API_BASE}/users`, { headers: getHeaders() });
     return res.json();
@@ -92,6 +105,8 @@ export const api = {
     severity: string;
     location: { lat: number; lng: number; address: string; landmark?: string };
     photoUrl?: string;
+    citizenName?: string;
+    citizenEmail?: string;
   }): Promise<{ report: CitizenReport; duplicateCandidates: DuplicateCandidate[]; recurringIncident?: RecurringIssue }> {
     const res = await fetch(`${API_BASE}/reports`, {
       method: 'POST',

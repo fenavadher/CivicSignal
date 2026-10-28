@@ -12,6 +12,7 @@ import {
   ChevronLeft,
   ChevronRight,
   ShieldAlert,
+  Users,
 } from 'lucide-react';
 import { api } from '../../services/api';
 
@@ -39,6 +40,7 @@ export const StaffSidebar: React.FC = () => {
   const navItems = [
     { to: '/staff', label: 'Operations Command', icon: LayoutDashboard, exact: true },
     { to: '/staff/issues', label: 'All Managed Issues', icon: Layers },
+    { to: '/staff/users', label: 'Citizens & User Directory', icon: Users },
     {
       to: '/staff/duplicates',
       label: 'Duplicate Review Queue',

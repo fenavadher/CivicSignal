@@ -6,6 +6,7 @@ import { StatusBadge, SeverityBadge } from '../components/common/StatusBadge';
 import { PriorityMeter } from '../components/common/PriorityMeter';
 import { CivicMap } from '../components/map/CivicMap';
 import { downloadIncidentReportPdf } from '../utils/pdfGenerator';
+import { useAuth } from '../context/AuthContext';
 import {
   ArrowLeft,
   MapPin,
@@ -17,13 +18,16 @@ import {
   AlertCircle,
   ExternalLink,
   FileDown,
+  Loader2,
 } from 'lucide-react';
 
 export const ReportDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
+  const { showNotification } = useAuth();
   const [report, setReport] = useState<CitizenReport | null>(null);
   const [linkedIssue, setLinkedIssue] = useState<ManagedIssue | null>(null);
   const [loading, setLoading] = useState(true);
+  const [downloading, setDownloading] = useState(false);
 
   useEffect(() => {
     const fetchDetail = async () => {
@@ -40,6 +44,20 @@ export const ReportDetailPage: React.FC = () => {
     };
     fetchDetail();
   }, [id]);
+
+  const handleDownloadReport = () => {
+    if (!report) return;
+    try {
+      setDownloading(true);
+      downloadIncidentReportPdf(report, linkedIssue);
+      showNotification('Official incident report PDF downloaded successfully.', 'success');
+    } catch (err) {
+      console.error('Failed to generate PDF:', err);
+      showNotification('Could not generate PDF report.', 'error');
+    } finally {
+      setTimeout(() => setDownloading(false), 500);
+    }
+  };
 
   if (loading) {
     return (
@@ -74,11 +92,17 @@ export const ReportDetailPage: React.FC = () => {
         </Link>
         <div className="flex items-center gap-3">
           <button
-            onClick={() => downloadIncidentReportPdf(report, linkedIssue)}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-semibold shadow-xs transition-colors"
+            onClick={handleDownloadReport}
+            disabled={downloading}
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-semibold shadow-xs transition-colors disabled:opacity-50 cursor-pointer"
             title="Download PDF version of this incident report"
           >
-            <FileDown className="w-4 h-4" /> Download Report (PDF)
+            {downloading ? (
+              <Loader2 className="w-4 h-4 animate-spin" />
+            ) : (
+              <FileDown className="w-4 h-4" />
+            )}
+            Download Report
           </button>
           <div className="flex items-center gap-1.5">
             <span className="text-xs text-slate-400">ID:</span>
@@ -187,6 +211,22 @@ export const ReportDetailPage: React.FC = () => {
                   Immutable Record
                 </span>
               </div>
+            </div>
+
+            <div className="pt-3 border-t border-slate-100">
+              <button
+                type="button"
+                onClick={handleDownloadReport}
+                disabled={downloading}
+                className="w-full inline-flex items-center justify-center gap-2 py-2 px-3 bg-slate-50 hover:bg-slate-100 border border-slate-200 text-slate-800 font-semibold rounded-lg transition-colors text-xs cursor-pointer disabled:opacity-50"
+              >
+                {downloading ? (
+                  <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                ) : (
+                  <FileDown className="w-3.5 h-3.5 text-blue-600" />
+                )}
+                Download Report (PDF)
+              </button>
             </div>
           </div>
 

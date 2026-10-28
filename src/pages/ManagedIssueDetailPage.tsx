@@ -236,11 +236,14 @@ export const ManagedIssueDetailPage: React.FC = () => {
             <div className="flex items-center gap-2">
               <button
                 type="button"
-                onClick={() => downloadWorkOrderPdf(issue, linkedReports)}
-                className="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-semibold border border-slate-200 flex items-center gap-1.5 transition-colors"
-                title="Download official Work Order Dispatch PDF"
+                onClick={() => {
+                  downloadWorkOrderPdf(issue, linkedReports);
+                  showNotification('Municipal work order PDF report downloaded successfully.', 'success');
+                }}
+                className="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-semibold border border-slate-200 flex items-center gap-1.5 transition-colors cursor-pointer"
+                title="Download official Work Order PDF Summary"
               >
-                <FileDown className="w-4 h-4 text-teal-700" /> Download PDF Docket
+                <FileDown className="w-4 h-4 text-teal-700" /> Download Report
               </button>
               <SlaBadge deadlineIso={issue.resolutionDeadline} isResolved={issue.status === 'resolved'} />
               {issue.status !== 'resolved' && (

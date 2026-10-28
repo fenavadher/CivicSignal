@@ -77,6 +77,12 @@ export function downloadIncidentReportPdf(report: CitizenReport, linkedIssue?: M
   doc.text(descLines, 15, currentY);
   currentY += descLines.length * 4.5 + 6;
 
+  // Check page overflow
+  if (currentY > 240) {
+    doc.addPage();
+    currentY = 20;
+  }
+
   // Section 2: Location
   doc.setTextColor(15, 23, 42);
   doc.setFontSize(12);
@@ -99,6 +105,12 @@ export function downloadIncidentReportPdf(report: CitizenReport, linkedIssue?: M
     currentY
   );
   currentY += 9;
+
+  // Check page overflow
+  if (currentY > 220) {
+    doc.addPage();
+    currentY = 20;
+  }
 
   // Section 3: Linked Work Order
   doc.setTextColor(15, 23, 42);
@@ -144,6 +156,11 @@ export function downloadIncidentReportPdf(report: CitizenReport, linkedIssue?: M
   }
 
   // Section 4: Audit & Integrity Seal
+  if (currentY > 255) {
+    doc.addPage();
+    currentY = 20;
+  }
+
   doc.setDrawColor(203, 213, 225);
   doc.line(15, currentY, pageWidth - 15, currentY);
   currentY += 8;

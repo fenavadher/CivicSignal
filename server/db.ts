@@ -155,10 +155,34 @@ class DatabaseManager {
       email,
       name,
       role,
+      notificationPreferences: {
+        emailStatusUpdates: true,
+        emailDuplicateGrouping: true,
+        emailWeeklyDigest: false,
+        smsEmergencyAlerts: true,
+      },
       createdAt: new Date().toISOString(),
     };
     this.data.users.push(user);
     this.recordAuditLog(user, 'SUBMIT_REPORT', 'system', user.id, `New user registered: ${name} (${email}) with role ${role}`);
+    this.scheduleSave();
+    return user;
+  }
+
+  public updateUser(userId: string, updates: Partial<User>): User {
+    const user = this.getUserById(userId);
+    if (!user) throw new Error('User not found');
+
+    const { role, id, ...allowedUpdates } = updates;
+    Object.assign(user, allowedUpdates);
+
+    this.recordAuditLog(
+      user,
+      'UPDATE_SETTINGS',
+      'system',
+      user.id,
+      `User updated profile contact details and notification settings: ${user.name}`
+    );
     this.scheduleSave();
     return user;
   }

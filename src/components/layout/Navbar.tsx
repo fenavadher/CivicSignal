@@ -106,6 +106,14 @@ export const Navbar: React.FC = () => {
                     >
                       <FileText className="w-3.5 h-3.5" /> My Reports
                     </Link>
+                    <Link
+                      to="/profile"
+                      className={`px-3 py-1.5 rounded-md text-xs font-medium flex items-center gap-1.5 transition-colors ${
+                        isActive('/profile') ? 'text-blue-600 bg-blue-50' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
+                      }`}
+                    >
+                      <User className="w-3.5 h-3.5" /> Profile
+                    </Link>
                   </>
                 )}
 
@@ -234,13 +242,27 @@ export const Navbar: React.FC = () => {
 
               {/* Auth state / Logout */}
               {user ? (
-                <button
-                  onClick={logout}
-                  className="p-1.5 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-md transition-colors"
-                  title="Sign Out"
-                >
-                  <LogOut className="w-4 h-4" />
-                </button>
+                <div className="flex items-center gap-1 sm:gap-2">
+                  <Link
+                    to="/profile"
+                    className="flex items-center gap-1.5 px-2 py-1 text-xs font-medium text-slate-700 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition-colors border border-transparent hover:border-slate-200"
+                    title="View & Edit Citizen Profile"
+                  >
+                    <div className="w-6 h-6 rounded-full bg-blue-600 text-white text-[11px] font-bold flex items-center justify-center shrink-0">
+                      {user.name ? user.name[0].toUpperCase() : 'U'}
+                    </div>
+                    <span className="hidden sm:inline max-w-[85px] truncate font-semibold">
+                      {user.name.split(' ')[0]}
+                    </span>
+                  </Link>
+                  <button
+                    onClick={logout}
+                    className="p-1.5 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-md transition-colors"
+                    title="Sign Out"
+                  >
+                    <LogOut className="w-4 h-4" />
+                  </button>
+                </div>
               ) : (
                 <Link
                   to="/login"
@@ -294,9 +316,17 @@ export const Navbar: React.FC = () => {
               My Reports
             </Link>
             <Link
+              to="/profile"
+              onClick={() => setMobileMenuOpen(false)}
+              className="block px-3 py-2 rounded-md font-semibold text-blue-700 hover:bg-blue-50 flex items-center gap-2"
+            >
+              <User className="w-4 h-4 text-blue-600" />
+              My Profile & Notifications
+            </Link>
+            <Link
               to="/staff"
               onClick={() => setMobileMenuOpen(false)}
-              className="block px-3 py-2 rounded-md font-medium text-blue-700 bg-blue-50"
+              className="block px-3 py-2 rounded-md font-medium text-slate-700 hover:bg-slate-50"
             >
               Municipal Staff Console
             </Link>

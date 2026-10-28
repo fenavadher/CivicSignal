@@ -51,6 +51,22 @@ apiRouter.get('/auth/me', (req: Request, res: Response) => {
   return res.json({ user: user || null });
 });
 
+apiRouter.patch('/auth/profile', (req: Request, res: Response) => {
+  const actor = getActor(req);
+  const { name, phone, department, address, notificationPreferences } = req.body;
+  const updatedUser = db.updateUser(actor.id, {
+    ...(name ? { name } : {}),
+    ...(phone !== undefined ? { phone } : {}),
+    ...(department !== undefined ? { department } : {}),
+    ...(address !== undefined ? { address } : {}),
+    ...(notificationPreferences !== undefined ? { notificationPreferences } : {}),
+  });
+  if (!updatedUser) {
+    return res.status(404).json({ error: 'User not found' });
+  }
+  return res.json({ user: updatedUser });
+});
+
 apiRouter.get('/users', (req: Request, res: Response) => {
   return res.json({ users: db.getUsers() });
 });
@@ -76,17 +92,20 @@ apiRouter.get('/reports/:id', (req: Request, res: Response) => {
 apiRouter.post('/reports', async (req: Request, res: Response) => {
   try {
     const actor = getActor(req);
-    const { title, category, description, severity, location, photoUrl } = req.body;
+    const { title, category, description, severity, location, photoUrl, citizenName, citizenEmail } = req.body;
 
     if (!title || !category || !description || !location || !location.lat || !location.lng) {
       return res.status(400).json({ error: 'Title, category, description, and valid location are required' });
     }
 
+    const subName = citizenName?.trim() || actor.name || 'Anonymous Citizen';
+    const subEmail = citizenEmail?.trim() || db.getUserById(actor.id)?.email || 'citizen@civicsignal.org';
+
     const result = await db.submitReport(
       {
         submitterId: actor.id,
-        submitterName: actor.name,
-        submitterEmail: db.getUserById(actor.id)?.email || 'citizen@civicsignal.org',
+        submitterName: subName,
+        submitterEmail: subEmail,
         title,
         category,
         description,
@@ -94,7 +113,7 @@ apiRouter.post('/reports', async (req: Request, res: Response) => {
         location,
         photoUrl: photoUrl || undefined,
       },
-      actor
+      { ...actor, name: subName }
     );
 
     return res.json(result);

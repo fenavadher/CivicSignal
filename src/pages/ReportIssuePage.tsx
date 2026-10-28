@@ -36,6 +36,8 @@ export const ReportIssuePage: React.FC = () => {
   const [category, setCategory] = useState<IssueCategory>('pothole_roads');
   const [description, setDescription] = useState('');
   const [severity, setSeverity] = useState<IssueSeverity>('medium');
+  const [citizenName, setCitizenName] = useState(user?.name || 'Jane Citizen');
+  const [citizenEmail, setCitizenEmail] = useState(user?.email || 'citizen@civicsignal.org');
   const [address, setAddress] = useState('420 Pine St & 5th Ave');
   const [landmark, setLandmark] = useState('');
   const [coordinates, setCoordinates] = useState<{ lat: number; lng: number }>({
@@ -97,6 +99,8 @@ export const ReportIssuePage: React.FC = () => {
         category,
         description,
         severity,
+        citizenName,
+        citizenEmail,
         location: {
           lat: coordinates.lat,
           lng: coordinates.lng,
@@ -213,11 +217,50 @@ export const ReportIssuePage: React.FC = () => {
           </div>
         </div>
 
+        {/* Submitter Contact Card */}
+        <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-2xs space-y-4">
+          <div className="pb-2 border-b border-slate-100 flex items-center justify-between">
+            <h2 className="text-sm font-bold text-slate-900 flex items-center gap-1.5">
+              2. Your Citizen Contact Details
+            </h2>
+            <span className="text-[11px] text-slate-400">Used for official status notifications</span>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-xs font-semibold text-slate-700 mb-1">
+                Your Full Name <span className="text-red-500">*</span>
+              </label>
+              <input
+                type="text"
+                required
+                value={citizenName}
+                onChange={(e) => setCitizenName(e.target.value)}
+                placeholder="e.g. John Doe"
+                className="w-full px-3 py-2 border border-slate-200 rounded-lg text-xs focus:outline-hidden focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-semibold text-slate-700 mb-1">
+                Your Email Address <span className="text-red-500">*</span>
+              </label>
+              <input
+                type="email"
+                required
+                value={citizenEmail}
+                onChange={(e) => setCitizenEmail(e.target.value)}
+                placeholder="e.g. john.doe@example.com"
+                className="w-full px-3 py-2 border border-slate-200 rounded-lg text-xs focus:outline-hidden focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
+              />
+            </div>
+          </div>
+        </div>
+
         {/* Location Card with Interactive Leaflet Map Picker */}
         <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-2xs space-y-4">
           <div className="flex items-center justify-between pb-2 border-b border-slate-100">
             <h2 className="text-sm font-bold text-slate-900 flex items-center gap-1.5">
-              <MapPin className="w-4 h-4 text-blue-600" /> 2. Incident Location & Map Pin
+              <MapPin className="w-4 h-4 text-blue-600" /> 3. Incident Location & Map Pin
             </h2>
             <span className="text-[11px] text-slate-400">Click map to set exact pin</span>
           </div>

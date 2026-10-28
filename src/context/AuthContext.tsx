@@ -9,6 +9,7 @@ interface AuthContextType {
   register: (email: string, name: string) => Promise<void>;
   logout: () => void;
   switchRole: (role: UserRole) => Promise<void>;
+  updateProfile: (updates: Partial<User>) => Promise<User>;
   notification: { message: string; type: 'success' | 'error' | 'info' } | null;
   showNotification: (message: string, type?: 'success' | 'error' | 'info') => void;
   clearNotification: () => void;
@@ -56,6 +57,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         if (stored) {
           const parsed = JSON.parse(stored);
           setUser(parsed);
+          // Sync with server in background
+          api.getMe().then((res) => {
+            if (res.user) {
+              setUser(res.user);
+              localStorage.setItem('civicsignal_user', JSON.stringify(res.user));
+            }
+          }).catch(() => {});
         } else {
           // Default to citizen demo account for instant out-of-the-box exploration
           const demoUser: User = {
@@ -91,6 +99,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setUser(res.user);
     localStorage.setItem('civicsignal_user', JSON.stringify(res.user));
     showNotification(`Account created! Welcome to CivicSignal, ${res.user.name}.`, 'success');
+  };
+
+  const updateProfile = async (updates: Partial<User>) => {
+    const res = await api.updateProfile(updates);
+    setUser(res.user);
+    localStorage.setItem('civicsignal_user', JSON.stringify(res.user));
+    showNotification('Profile updated successfully!', 'success');
+    return res.user;
   };
 
   const logout = () => {
@@ -137,6 +153,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         loading,
         login,
         register,
+        updateProfile,
         logout,
         switchRole,
         notification,

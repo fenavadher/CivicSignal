@@ -22,6 +22,8 @@ import { SlaTrackingPage } from './pages/SlaTrackingPage';
 import { AnalyticsPage } from './pages/AnalyticsPage';
 import { AuditLogsPage } from './pages/AuditLogsPage';
 import { SettingsPage } from './pages/SettingsPage';
+import { ProfilePage } from './pages/ProfilePage';
+import { StaffUsersPage } from './pages/StaffUsersPage';
 import { CheckCircle2, AlertCircle, Info, X } from 'lucide-react';
 
 const NotificationToast: React.FC = () => {
@@ -60,11 +62,13 @@ export default function App() {
               <Route path="/report" element={<ReportIssuePage />} />
               <Route path="/my-reports" element={<MyReportsPage />} />
               <Route path="/reports/:id" element={<ReportDetailPage />} />
+              <Route path="/profile" element={<ProfilePage />} />
 
               {/* Municipal Staff Routes */}
               <Route path="/staff" element={<StaffDashboard />} />
               <Route path="/staff/issues" element={<ManagedIssuesPage />} />
               <Route path="/staff/issues/:id" element={<ManagedIssueDetailPage />} />
+              <Route path="/staff/users" element={<StaffUsersPage />} />
               <Route path="/staff/duplicates" element={<DuplicateReviewPage />} />
               <Route path="/staff/recurring" element={<RecurringIssuesPage />} />
               <Route path="/staff/sla" element={<SlaTrackingPage />} />
